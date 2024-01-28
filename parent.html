@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parent Window</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Parent Window:</h1>
+      <input id="message" type="text" />
+      <button id="sendMessage">Send Parent Message to Iframe</button>
+
+      <p>Message From Iframe is below</p>
+      <p id="iframeMessage"></p>
+    </div>
+    <script>
+      // Send Data From Parent to Iframe using iframe.contentWindow.postMessage
+      var button = document.getElementById("sendMessage");
+      function sendMessage() {
+        const message = document.querySelector("#message").value;
+        const iframe = document.querySelector("iframe");
+        console.log(message, "Parent Msg");
+        iframe.contentWindow.postMessage(message, "http://127.0.0.1:5500");
+      }
+      button.addEventListener("click", sendMessage);
+
+      //   Receiving Message from Iframe
+      window.addEventListener("message", (event) => {
+        console.log(event.origin, "DATE");
+        if (event.origin === "http://127.0.0.1:5500") {
+          document.getElementById("iframeMessage").innerText =
+            typeof event.data === "string"
+              ? event.data
+              : JSON.stringify(event.data);
+        }
+      });
+    </script>
+    <h1>Iframe Window:</h1>
+    <iframe src="./iframe.html" />
+  </body>
+</html>

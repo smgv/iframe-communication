@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iframe Window</title>
+  </head>
+  <body>
+    <p>Message From Parent Window is below</p>
+    <p id="parentToIframeMsg"></p>
+    <input id="iframeMessage" type="text" />
+    <button id="sendIframeMessage">Send Iframe Message To Parent</button>
+    <script>
+      //   Add Message EventListener so on postMessage it can receive data
+      window.addEventListener("message", function (event) {
+        const pEl = document.getElementById("parentToIframeMsg");
+        console.log(event.origin, "EVENT");
+        if (event.origin === "http://127.0.0.1:5500") {
+          typeof event.data === "string"
+            ? (pEl.innerText = event.data)
+            : JSON.stringify(event.data);
+          console.log(
+            "Message received from the parent: " + JSON.stringify(event.data)
+          );
+        }
+      });
+
+      const button = document.getElementById("sendIframeMessage");
+      const sendIframeMessage = () => {
+        const message = document.getElementById("iframeMessage").value;
+        window.parent.postMessage(message, "http://127.0.0.1:5500");
+      };
+      button.addEventListener("click", sendIframeMessage);
+    </script>
+  </body>
+</html>
